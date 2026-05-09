@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.*" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -145,6 +145,39 @@
 
 <body>
 
+<%
+    List<Map<String, String>> members = (List<Map<String, String>>) application.getAttribute("members");
+    if (members == null) {
+        members = new ArrayList<Map<String, String>>();
+        application.setAttribute("members", members);
+    }
+
+    String fullname = request.getParameter("fullname");
+    String age = request.getParameter("age");
+    String email = request.getParameter("email");
+    String phone = request.getParameter("phone");
+    String message = null;
+
+    if (fullname != null || age != null || email != null || phone != null) {
+        fullname = fullname == null ? "" : fullname.trim();
+        age = age == null ? "" : age.trim();
+        email = email == null ? "" : email.trim();
+        phone = phone == null ? "" : phone.trim();
+
+        if (!fullname.isEmpty() && !age.isEmpty() && !email.isEmpty() && !phone.isEmpty()) {
+            Map<String, String> member = new HashMap<String, String>();
+            member.put("fullname", fullname);
+            member.put("age", age);
+            member.put("email", email);
+            member.put("phone", phone);
+            members.add(member);
+            message = "Đăng ký thành viên thành công!";
+        } else {
+            message = "Vui lòng điền đầy đủ họ tên, tuổi, email và số điện thoại.";
+        }
+    }
+%>
+
 <!-- MENU -->
 <nav>
     <h2>CYBER GAME</h2>
@@ -218,11 +251,70 @@
 
 </section>
 
+<!-- MEMBER REGISTRATION -->
+<section class="form-section">
+    <h1 style="text-align:center;margin-bottom:30px;color:#00ffe7;">Đăng Ký Thành Viên</h1>
+
+    <form method="get" action="index.jsp">
+        <div class="form-grid">
+            <div>
+                <label for="fullname">Họ và tên</label>
+                <input type="text" id="fullname" name="fullname" value='<%= fullname != null ? fullname : "" %>' placeholder="Nhập họ tên của bạn">
+            </div>
+            <div>
+                <label for="age">Tuổi</label>
+                <input type="number" id="age" name="age" value='<%= age != null ? age : "" %>' placeholder="Nhập tuổi">
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value='<%= email != null ? email : "" %>' placeholder="Nhập email">
+            </div>
+            <div>
+                <label for="phone">Số điện thoại</label>
+                <input type="tel" id="phone" name="phone" value='<%= phone != null ? phone : "" %>' placeholder="Nhập số điện thoại">
+            </div>
+        </div>
+
+        <div class="submit-block">
+            <button type="submit" class="btn">Đăng Ký</button>
+        </div>
+    </form>
+
+    <% if (message != null) { %>
+        <div class="message"><%= message %></div>
+    <% } %>
+
+    <% if (!members.isEmpty()) { %>
+        <table class="member-table">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Họ Tên</th>
+                    <th>Tuổi</th>
+                    <th>Email</th>
+                    <th>SDT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (int i = 0; i < members.size(); i++) {
+                    Map<String, String> member = members.get(i);
+                %>
+                <tr>
+                    <td><%= i + 1 %></td>
+                    <td><%= member.get("fullname") %></td>
+                    <td><%= member.get("age") %></td>
+                    <td><%= member.get("email") %></td>
+                    <td><%= member.get("phone") %></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    <% } %>
+</section>
+
 <footer>
     © 2026 Cyber Game Arena | JSP Gaming Website
 </footer>
 
 </body>
 </html>
-
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
